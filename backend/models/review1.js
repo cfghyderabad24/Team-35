@@ -14,6 +14,10 @@ const review1Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  amount:{
+    type:Number,
+    required:true
+  }
  
 });
 

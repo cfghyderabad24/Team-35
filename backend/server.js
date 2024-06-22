@@ -41,7 +41,7 @@ const client = new twilio(accountSid, authToken);
 app.post('/send-sms', async (req, res) => {
   try {
     const sendMessages = users.map(async (user) => {
-      const message = 'Your msg';
+      const message = '"Just a friendly reminder! Your visit is just 2 days away. Please ensure your visit before the due date!"';
       return client.messages.create({
         body: message,
         from: twilioPhoneNumber,
@@ -175,7 +175,7 @@ const API_ENDPOINT = 'https://localhost:5000/send-email';
 
       // Find documents where the date field is within the last 7 days
       const query = { date: { $gte: dateThreshold } };
-      const results = await collection.find(query).toArray();
+      const results = await cronjobs.find(query).toArray();
 
       // Iterate over results and call mailing API
       results.forEach(async (doc) => {
@@ -184,7 +184,7 @@ const API_ENDPOINT = 'https://localhost:5000/send-email';
             // Payload to your mailing API (e.g., email content)
             to: doc.email,
             subject: 'Reminder',
-            body: `Hello ${doc.name}, this is a reminder.`,
+            body: `Just a friendly reminder! Your visit is just 2 days away. Please ensure your visit before the due date!"'.`,
           });
           console.log('Mail API response:', response.data);
         } catch (error) {
@@ -204,4 +204,25 @@ const API_ENDPOINT = 'https://localhost:5000/send-email';
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+app.get('/alert', async (req, res) => {
+  const { email } = req.query;
+  
+  if (!email) {
+    return res.status(400).json({ error: 'Email query parameter is required' });
+  }
+
+  const sevenDaysAgo = moment().subtract(7, 'days').format('DD-MM-YY');
+
+  try {
+    const users = await cronjobs.find({
+      email,
+      date: { $gte: sevenDaysAgo }
+    }).select('date NGO -_id'); // Only select date and NGO fields
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });

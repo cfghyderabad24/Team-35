@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  NGO :{
+    type: String,
+    required: true,
+  },
  
 });
 
