@@ -12,7 +12,7 @@ const twilio = require('twilio');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
-  origin: 'http://localhost:3001', // Adjust the your frontend URL for CORS Policy
+  origin: 'http://localhost:3000', // Adjust the your frontend URL for CORS Policy
   credentials: true 
 }));
 app.use(cookieParser()); // for jwt
