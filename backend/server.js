@@ -99,6 +99,7 @@ const Review = require('./models/review1');
 
 // Review posting endpoint
 app.post('/reviews1', async (req, res) => {
+  console.log(req);
   const { ngo, dov, review } = req.body;
 
   try {
