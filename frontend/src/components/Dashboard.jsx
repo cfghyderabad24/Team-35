@@ -2,12 +2,23 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Typing from 'react-typing-effect';
 import Card from './Card'
+import Axios from 'axios';
 function Dashboard() {
     const [showEventProgress, setShowEventProgress] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const profileRef = useRef(null);
     const navigate = useNavigate();
 
+    const [blogs, setBlogs] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+                const response = await Axios.get("http://localhost:5000/getreviews");
+                 console.log(response.data)
+                setBlogs(response.data);
+        };
+
+        fetchData();
+    }, []);
     const toggleEventProgress = () => {
         setShowEventProgress(!showEventProgress);
     };
@@ -23,6 +34,14 @@ function Dashboard() {
     const logout=()=>{
         navigate('/login');
     }
+
+    const formatDate = (isoDateString) => {
+        const date = new Date(isoDateString);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear() % 100; // Get last two digits of the year
+        return `${day}/${month}/${year}`;
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -256,7 +275,22 @@ function Dashboard() {
                     <h1>Work</h1>
                     <div >
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <Card 
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+                
+                {blogs.map((element, index) => (
+                    // console.log(index),
+                    <Card
+    key={index}
+    id={index}
+    name={element.ngo}
+    targetDate={formatDate(element.dov)}
+    reviewContent={element.review}
+/>
+
+                ))}
+                
+            </div>
+                    {/* <Card 
                             name={"Helping Hands"}
                             targetDate={"December 31, 2024"}
                             reviewContent={"Helping Hands is dedicated to providing support to underprivileged communities. Their initiatives in education and healthcare have made a significant impact."}
@@ -280,7 +314,7 @@ function Dashboard() {
                             name={"Helping Hands"}
                             targetDate={"December 31, 2024"}
                             reviewContent={"Helping Hands is dedicated to providing support to underprivileged communities. Their initiatives in education and healthcare have made a significant impact."}
-                        />
+                        /> */}
 
       </div>
     </div>

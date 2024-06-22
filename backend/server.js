@@ -96,6 +96,7 @@ app.post('/send-email', (req, res) => {
 });
 
 const Review = require('./models/review1');
+const Review2 = require('./models/review2');
 
 // Review posting endpoint
 app.post('/reviews1', async (req, res) => {
@@ -112,6 +113,33 @@ app.post('/reviews1', async (req, res) => {
   } catch (error) {
     console.error('Error posting review:', error);
     res.status(500).json({ message: 'Failed to post review' });
+  }
+});
+
+app.post('/reviews2', async (req, res) => {
+  const { ngo, dov, review } = req.body;
+
+  try {
+    const newReview = new Review2({
+      ngo, dov, review 
+    });
+
+    const savedReview = await newReview.save();
+
+    res.status(201).json(savedReview);
+  } catch (error) {
+    console.error('Error posting review:', error);
+    res.status(500).json({ message: 'Failed to post review' });
+  }
+});
+
+app.get('/getreviews', async (req, res) => {
+  try {
+    const reviews = await Review.find();
+    res.json(reviews);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
