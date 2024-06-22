@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 const app = express();
 const cron = require('node-cron');
 const axios = require('axios');
-
+var cronjobs = require("./models/cronjob.js");
 
 const twilio = require('twilio');
 app.use(bodyParser.json());
@@ -96,6 +96,7 @@ app.post('/send-email', (req, res) => {
 });
 
 const Review = require('./models/review1');
+const Review2 = require('./models/review2');
 
 // Review posting endpoint
 app.post('/reviews1', async (req, res) => {
@@ -113,6 +114,33 @@ app.post('/reviews1', async (req, res) => {
   } catch (error) {
     console.error('Error posting review:', error);
     res.status(500).json({ message: 'Failed to post review' });
+  }
+});
+
+app.post('/reviews2', async (req, res) => {
+  const { ngo, dov, review } = req.body;
+
+  try {
+    const newReview = new Review2({
+      ngo, dov, review 
+    });
+
+    const savedReview = await newReview.save();
+
+    res.status(201).json(savedReview);
+  } catch (error) {
+    console.error('Error posting review:', error);
+    res.status(500).json({ message: 'Failed to post review' });
+  }
+});
+
+app.get('/getreviews', async (req, res) => {
+  try {
+    const reviews = await Review.find();
+    res.json(reviews);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -136,7 +164,7 @@ app.post('/reviews2', async (req, res) => {
 });
 
 
-/*
+
 
 const API_ENDPOINT = 'https://localhost:5000/send-email'; 
   // Cron job to run every day at midnight (0 0 * * *)
@@ -147,7 +175,7 @@ const API_ENDPOINT = 'https://localhost:5000/send-email';
       dateThreshold.setDate(dateThreshold.getDate() - 7);
 
       // Find documents where the date field is within the last 7 days
-      const query = { dateField: { $gte: dateThreshold } };
+      const query = { date: { $gte: dateThreshold } };
       const results = await collection.find(query).toArray();
 
       // Iterate over results and call mailing API
@@ -171,7 +199,7 @@ const API_ENDPOINT = 'https://localhost:5000/send-email';
     scheduled: false // Start cron job manually below
   });
 
-*/
+
 
 
 const PORT = process.env.PORT || 5000;
