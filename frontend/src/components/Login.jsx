@@ -1,7 +1,6 @@
 import React,{useState} from "react";
-import { Link,useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import Axios from 'axios';
-import ChatbaseChatbotEmbed from "./ChatbaseChatbotEmbed";
 
 
 function Login() {
@@ -62,23 +61,7 @@ function Login() {
               />
             </div>
           </div>
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium leading-6 text-gray-900">
-              Role
-            </label>
-            <div className="mt-2">
-              <select
-                id="role"
-                name="role"
-                required
-                className="block w-full px-3 py-2 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              >
-                <option value="Member">Member</option>
-                <option value="Manager">Manager</option>
-                <option value="Vice President">Vice President</option>
-              </select>
-            </div>
-          </div>
+          
           <div>
           <p style={{color:"red"}}>{message}</p>
 
@@ -91,14 +74,8 @@ function Login() {
             </button>
           </div>
 
-          <p className="mt-6 text-sm text-center text-gray-500">
-            Don't have an account?{' '}
-            <Link to="/" className="font-medium text-indigo-600 hover:text-indigo-500">
-              Register
-            </Link>
-          </p>
+          
         </form>
-      
       </div>
     </div>
   );
