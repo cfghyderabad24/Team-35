@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 const app = express();
 const cron = require('node-cron');
 const axios = require('axios');
-
+var cronjobs = require("./models/cronjob.js");
 
 const twilio = require('twilio');
 app.use(bodyParser.json());
@@ -135,7 +135,7 @@ app.post('/reviews2', async (req, res) => {
 });
 
 
-/*
+
 
 const API_ENDPOINT = 'https://localhost:5000/send-email'; 
   // Cron job to run every day at midnight (0 0 * * *)
@@ -146,7 +146,7 @@ const API_ENDPOINT = 'https://localhost:5000/send-email';
       dateThreshold.setDate(dateThreshold.getDate() - 7);
 
       // Find documents where the date field is within the last 7 days
-      const query = { dateField: { $gte: dateThreshold } };
+      const query = { date: { $gte: dateThreshold } };
       const results = await collection.find(query).toArray();
 
       // Iterate over results and call mailing API
@@ -170,7 +170,7 @@ const API_ENDPOINT = 'https://localhost:5000/send-email';
     scheduled: false // Start cron job manually below
   });
 
-*/
+
 
 
 const PORT = process.env.PORT || 5000;
