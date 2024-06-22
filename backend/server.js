@@ -6,17 +6,19 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const nodemailer = require('nodemailer');
 const app = express();
-const sendgrid = require('@sendgrid/mail');
+const cron = require('node-cron');
+const axios = require('axios');
+
 
 const twilio = require('twilio');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
-  origin: 'http://localhost:3001', // Adjust the your frontend URL for CORS Policy
+  origin: 'http://localhost:3000', // Adjust the your frontend URL for CORS Policy
   credentials: true 
 }));
 app.use(cookieParser()); // for jwt
-const mailgun = require('mailgun-js');
+
 const uri = process.env.MONGO_URI;
 
 //mongo connection
@@ -93,6 +95,82 @@ app.post('/send-email', (req, res) => {
   });
 });
 
+const Review = require('./models/review1');
+
+// Review posting endpoint
+app.post('/reviews1', async (req, res) => {
+  const { ngo, dov, review } = req.body;
+
+  try {
+    const newReview = new Review({
+      ngo, dov, review 
+    });
+
+    const savedReview = await newReview.save();
+
+    res.status(201).json(savedReview);
+  } catch (error) {
+    console.error('Error posting review:', error);
+    res.status(500).json({ message: 'Failed to post review' });
+  }
+});
+
+
+
+
+app.post('/reviews2', async (req, res) => {
+  const { ngo, dov, review } = req.body;
+
+  try {
+    const newReview = new Review({
+      ngo, dov, review 
+    });
+
+    const savedReview = await newReview.save();
+    res.status(201).json(savedReview);
+  } catch (error) {
+    console.error('Error posting review:', error);
+    res.status(500).json({ message: 'Failed to post review' });
+  }
+});
+
+
+/*
+
+const API_ENDPOINT = 'https://localhost:5000/send-email'; 
+  // Cron job to run every day at midnight (0 0 * * *)
+  cron.schedule('0 0 * * *', async () => {
+    try {
+      // Calculate date 7 days ago
+      const dateThreshold = new Date();
+      dateThreshold.setDate(dateThreshold.getDate() - 7);
+
+      // Find documents where the date field is within the last 7 days
+      const query = { dateField: { $gte: dateThreshold } };
+      const results = await collection.find(query).toArray();
+
+      // Iterate over results and call mailing API
+      results.forEach(async (doc) => {
+        try {
+          const response = await axios.post(API_ENDPOINT, {
+            // Payload to your mailing API (e.g., email content)
+            to: doc.email,
+            subject: 'Reminder',
+            body: `Hello ${doc.name}, this is a reminder.`,
+          });
+          console.log('Mail API response:', response.data);
+        } catch (error) {
+          console.error('Error sending mail:', error);
+        }
+      });
+    } catch (error) {
+      console.error('Error querying MongoDB:', error);
+    }
+  }, {
+    scheduled: false // Start cron job manually below
+  });
+
+*/
 
 
 const PORT = process.env.PORT || 5000;
