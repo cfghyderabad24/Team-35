@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   Date: {
-    type: Date,
+    type: String,
     required: true,
   },
   NGO :{
@@ -26,6 +26,6 @@ const userSchema = new mongoose.Schema({
  
 });
 
-const User = mongoose.model('User1', userSchema);
+const cronjob = mongoose.model('cronjob', userSchema);
 
-module.exports = User;
+module.exports = cronjob;

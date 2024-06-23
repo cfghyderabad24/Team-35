@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 const app = express();
 const cron = require('node-cron');
 const axios = require('axios');
-var cronjobs = require("./models/cronjob.js");
+var cronjob = require("./models/cronjob.js");
 
 const twilio = require('twilio');
 app.use(bodyParser.json());
@@ -33,7 +33,7 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 const accountSid = 'AC98801fedc4eab84aa8841f2250065f3e'; // Replace with your Account SID
 const authToken = ''; // Replace with your Auth Token
 const twilioPhoneNumber = '+12097484090'; // Replace with your Twilio number
-
+const moment = require('moment');
 const users = [
   { phone: '7979037628' }, // Add more user objects as needed
 ];
@@ -100,11 +100,11 @@ const Review2 = require('./models/review2');
 
 // Review posting endpoint
 app.post('/reviews1', async (req, res) => {
-  const { ngo, dov, review } = req.body;
+  const { ngo, dov, review,amount } = req.body;
 
   try {
     const newReview = new Review({
-      ngo, dov, review 
+      ngo, dov, review ,amount
     });
 
     const savedReview = await newReview.save();
@@ -175,7 +175,7 @@ const API_ENDPOINT = 'https://localhost:5000/send-email';
 
       // Find documents where the date field is within the last 7 days
       const query = { date: { $gte: dateThreshold } };
-      const results = await cronjobs.find(query).toArray();
+      const results = await cronjob.find(query).toArray();
 
       // Iterate over results and call mailing API
       results.forEach(async (doc) => {
@@ -205,17 +205,18 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
+/*
 app.get('/alert', async (req, res) => {
   const { email } = req.query;
-  
+
   if (!email) {
     return res.status(400).json({ error: 'Email query parameter is required' });
   }
 
-  const sevenDaysAgo = moment().subtract(7, 'days').format('DD-MM-YY');
-
+  const sevenDaysAgo = moment().add(7, 'days').format('DD-MM-YY');
+   
   try {
+    console.log(`Querying for email: ${email} with date >= ${sevenDaysAgo}`);
     const users = await cronjobs.find({
       email,
       date: { $gte: sevenDaysAgo }
@@ -223,6 +224,31 @@ app.get('/alert', async (req, res) => {
 
     res.json(users);
   } catch (error) {
+    console.error('Error querying MongoDB:', error); // Log the error for debugging
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});*/
+
+
+
+app.get('/alert', async (req, res) => {
+  const { email } = req.query;
+ 
+
+  const specificDates = ["23-06-24", "24-06-24","25-06-24","26-06-24","27-06-24","28-06-24","29-06-24","30-06-24"];
+
+  try {
+    const users = await cronjob.find({
+      email,
+      date: { $in: specificDates}
+    })
+
+    res.json(users);
+  } catch (error) {
+    console.error('Error querying MongoDB:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+app.lis
